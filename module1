@@ -1,0 +1,47 @@
+#include <iostream>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+bool compareByBalance(const pair<int, int>& a, const pair<int, int>& b) {
+    if (a.second == b.second)
+        return a.first < b.first; 
+    return a.second < b.second;
+}
+
+int main() {
+    int N;
+    cin >> N;
+
+    vector<pair<int, int>> users(N); 
+    for (int i = 0; i < N; ++i) {
+        cin >> users[i].first >> users[i].second; 
+    }
+
+    int T;
+    cin >> T;
+    for (int i = 0; i < T; ++i) {
+        int fromUserID, toUserID, amount;
+        cin >> fromUserID >> toUserID >> amount;
+
+        auto fromIterator = find_if(users.begin(), users.end(),
+                                [fromUserID](const pair<int, int>& user) { return user.first == fromUserID; });
+        auto toIterator = find_if(users.begin(), users.end(),
+                              [toUserID](const pair<int, int>& user) { return user.first == toUserID; });
+
+        if (fromIterator != users.end() && toIterator != users.end() && fromIterator->second >= amount) {
+            fromIterator->second -= amount;
+            toIterator->second += amount;
+            cout << "Success" << endl;
+        } else {
+            cout << "Failure" << endl;
+        }
+    }
+    cout << endl;
+    sort(users.begin(), users.end(), compareByBalance);
+    for (const auto& user : users) {
+        cout << user.first << " " << user.second << endl;
+    }
+
+    return 0;
+}
